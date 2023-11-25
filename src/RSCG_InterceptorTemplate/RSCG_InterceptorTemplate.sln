@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34316.72
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RSCG_InterceptorTemplateConsole", "RSCG_InterceptorTemplateConsole\RSCG_InterceptorTemplateConsole.csproj", "{790A1F89-DB4B-4C76-90A5-C15907E15CB9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RSCG_InterceptorTemplateConsole", "RSCG_InterceptorTemplateConsole\RSCG_InterceptorTemplateConsole.csproj", "{790A1F89-DB4B-4C76-90A5-C15907E15CB9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RSCG_InterceptorTemplateCommon", "RSCG_InterceptorTemplateCommon\RSCG_InterceptorTemplateCommon.csproj", "{56D34F1A-A61E-4AE6-901E-E464141A443C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RSCG_InterceptorTemplateCommon", "RSCG_InterceptorTemplateCommon\RSCG_InterceptorTemplateCommon.csproj", "{56D34F1A-A61E-4AE6-901E-E464141A443C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RSCG_InterceptorTemplate", "RSCG_InterceptorTemplate\RSCG_InterceptorTemplate.csproj", "{D9868403-773E-4784-97D0-A1CC8D88029B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{56D34F1A-A61E-4AE6-901E-E464141A443C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{56D34F1A-A61E-4AE6-901E-E464141A443C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{56D34F1A-A61E-4AE6-901E-E464141A443C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9868403-773E-4784-97D0-A1CC8D88029B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9868403-773E-4784-97D0-A1CC8D88029B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9868403-773E-4784-97D0-A1CC8D88029B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9868403-773E-4784-97D0-A1CC8D88029B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

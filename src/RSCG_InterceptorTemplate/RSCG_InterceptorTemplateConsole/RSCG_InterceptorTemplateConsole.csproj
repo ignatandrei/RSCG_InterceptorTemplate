@@ -9,6 +9,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RSCG_InterceptorTemplateCommon\RSCG_InterceptorTemplateCommon.csproj" />
+    <ProjectReference Include="..\RSCG_InterceptorTemplate\RSCG_InterceptorTemplate.csproj"  OutputItemType="Analyzer"  ReferenceOutputAssembly="false" />
   </ItemGroup>
+	<PropertyGroup>
+		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+		<CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)\GX</CompilerGeneratedFilesOutputPath>
+		<InterceptorsPreviewNamespaces>$(InterceptorsPreviewNamespaces);RSCG_InterceptorTemplate</InterceptorsPreviewNamespaces>
+	</PropertyGroup>
 
 </Project>

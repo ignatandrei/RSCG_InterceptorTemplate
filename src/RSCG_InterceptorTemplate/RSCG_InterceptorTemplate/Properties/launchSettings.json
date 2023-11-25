@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "RSCGDebug": {
+      "commandName": "DebugRoslynComponent",
+      "targetProject": "..\\RSCG_InterceptorTemplateConsole\\RSCG_InterceptorTemplateConsole.csproj"
+    }
+  }
+}
