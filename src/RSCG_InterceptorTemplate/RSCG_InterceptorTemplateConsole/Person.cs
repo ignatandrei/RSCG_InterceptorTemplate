@@ -1,4 +1,8 @@
 ﻿namespace RSCG_InterceptorTemplateConsole;
+//internal class PersonLoader
+//{
+//    public Task<Person[]> GetPersonsFromFile()
+//}
 internal class Person
 {
     static int nrPersons= 0;
@@ -10,6 +14,7 @@ internal class Person
     public string? LastName { get; set; }
     public string FullName() => $"{FirstName} {LastName}";
 
+    public string FullNameWithSeparator(string separator) => $"{FirstName}{separator}{LastName}";
     public string Test()
     {
         return FullName();

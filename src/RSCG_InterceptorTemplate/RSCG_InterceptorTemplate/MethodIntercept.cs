@@ -130,6 +130,8 @@ static partial class SimpleIntercept
                 // Now 'line' contains the line of code from the location
                 string code = line.ToString();
                 int nr = 0;
+                content += "\r\n";
+                content += $@"//replace code: {code}";
                 string codeNumbered = "";
                 while (nr < code.Length)
                 {
@@ -147,8 +149,6 @@ static partial class SimpleIntercept
                 }
                 content += "\r\n";
                 content += $@"//replace code: {codeNumbered}";
-                content += "\r\n";
-                content += $@"//replace code: {code}";
                 content += "\r\n";
                 content += $"//variable : {item.NameOfVariable}";
                 content += "\r\n";
