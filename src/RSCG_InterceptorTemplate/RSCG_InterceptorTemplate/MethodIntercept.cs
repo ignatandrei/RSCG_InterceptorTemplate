@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Operations;
 using Microsoft.CodeAnalysis.Text;
 using System;
 using System.Collections.Immutable;
@@ -54,18 +55,26 @@ namespace RSCG_InterceptorTemplate{
             .Left.Right
             .Select(op =>
             {
-                TryGetMapMethodName(op.Syntax, out var methodName);
-                return new { op, methodName };
+                TryGetMapMethodName(op.Syntax, out var methodName);                
+                var invocation = op  as IInvocationOperation;
+                var typeOfClass = invocation?.Instance?.Type;
+                var typeAndMethod = new TypeAndMethod(typeOfClass?.ToString()??"", methodName??"");
+                return new { typeAndMethod,op};
 
             })
-            .GroupBy(x => x.methodName)
+            .Where(it=>it.typeAndMethod.IsValid())
+            .GroupBy(x => x.typeAndMethod)
             .ToDictionary(x => x.Key, x => x.ToArray())
             ;
-        var x1=ops.Keys.Count;
-        x1++;
-        foreach (var methodName in ops.Keys)
+
+        var x12= ops.Keys.Count;
+        x12+= 1;
+        foreach (var item in ops.Keys)
         {
-            
+            var methodName = item.Method;
+            var typeOfClass = item.TypeOfClass; 
+
+
             var content = $$"""
 
 static partial class SimpleIntercept
@@ -74,19 +83,47 @@ static partial class SimpleIntercept
 """
             ;
 
-            foreach (var item in ops[methodName])
+            foreach (var itemData in ops[item])
             {
-                var op= item.op;
+                var op= itemData.op;
                 var tree = op.Syntax.SyntaxTree;
 
                 var filePath = compilation.Options.SourceReferenceResolver?.NormalizePath(tree.FilePath, baseFilePath: null) ?? tree.FilePath;
                 var location = tree.GetLocation(op.Syntax.Span);
+                
                 var lineSpan = location.GetLineSpan();
-                var linePosition = lineSpan.StartLinePosition;
-                content += $@"//{filePath}:{linePosition.Line}:{linePosition.Character}";
+                var startLinePosition = lineSpan.StartLinePosition;
+
+                SourceText sourceText = location.SourceTree!.GetText();
+
+                
+                var line = sourceText.Lines[startLinePosition.Line];
+
+                // Now 'line' contains the line of code from the location
+                string code = line.ToString();
+                int nr = 0;
+                string codeNumbered = "";
+                while (nr < code.Length)
+                {
+                    nr++;
+                    var nr1 = nr % 10;
+                    if (nr1 == 0)
+                    {
+                        codeNumbered += "!";
+                    }
+                    else
+                    {
+                        codeNumbered += (nr1).ToString();
+                    }
+                    
+                }
+                content += "\r\n";
+                content += $@"//replace code: {codeNumbered}";
+                content += "\r\n";
+                content += $@"//replace code: {code}";
                 content += "\r\n";
                 content += $$""" 
-    [System.Runtime.CompilerServices.InterceptsLocation(@"{{lineSpan.Path}}", {{lineSpan.StartLinePosition.Line + 1}}, {{linePosition.Character + 3}})]
+    [System.Runtime.CompilerServices.InterceptsLocation(@"{{lineSpan.Path}}", {{startLinePosition.Line + 1}}, {{startLinePosition.Character + 3}})]
                 
 """;
             }
@@ -94,8 +131,9 @@ static partial class SimpleIntercept
             content += $$"""
 
     //[System.Diagnostics.DebuggerStepThrough()]
-    public static string Test{{methodName}}(this Person p)  {
-         return p.{{methodName}}();
+    public static string Test{{methodName}}(this {{typeOfClass.ToString()}} p)  {
+         return "A12";
+        //return p.{{methodName}}();
     
     }
 }                
