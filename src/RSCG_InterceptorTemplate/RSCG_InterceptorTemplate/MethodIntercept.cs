@@ -58,8 +58,29 @@ namespace RSCG_InterceptorTemplate{
                 TryGetMapMethodName(op.Syntax, out var methodName);  
                 var typeReturn = op.Type;
                 var invocation = op  as IInvocationOperation;
-                var typeOfClass = invocation?.Instance?.Type;
-                var typeAndMethod = new TypeAndMethod(typeOfClass?.ToString()??"", methodName??"",typeReturn.ToString()??"");
+                var instance = invocation?.Instance as ILocalReferenceOperation;
+                TypeAndMethod typeAndMethod;
+                if(instance == null)
+                {
+                    var staticMember = invocation?.TargetMethod?.ToString();
+                    //if(staticMember != null)
+                    //{
+                    //    var typeOfClass = compilation.GetTypeByMetadataName(staticMember);
+                    //}
+                    typeAndMethod = new TypeAndMethod(staticMember?? "", typeReturn?.ToString() ?? "");
+                    var nameMethod = typeAndMethod.MethodName;
+                    string fullCall = op.Syntax.ToFullString();
+                    var nameVar = fullCall.Substring(0,fullCall.Length-nameMethod.Length -"()".Length -".".Length );
+                    typeAndMethod.NameOfVariable=nameVar;
+
+                }
+                else
+                {
+                    var typeOfClass = instance.Type;
+                    var nameVar= instance.Local.Name;
+                    typeAndMethod = new TypeAndMethod(typeOfClass?.ToString() ?? "", methodName ?? "", typeReturn?.ToString() ?? "",nameVar);
+
+                }
                 return new { typeAndMethod,op};
 
             })
@@ -72,10 +93,16 @@ namespace RSCG_InterceptorTemplate{
         x12+= 1;
         foreach (var item in ops.Keys)
         {
-            var methodName = item.Method;
+            var methodName = item.MethodName;
             var typeOfClass = item.TypeOfClass; 
             var typeReturn = item.TypeReturn;
-
+            var nameOfVariable = item.NameOfVariable;
+            int extraLength = nameOfVariable.Length;
+            if(extraLength > 0)
+            {
+                //acknowledge the dot
+                extraLength += 1;
+            }
             var content = $$"""
 
 static partial class SimpleIntercept
@@ -123,8 +150,10 @@ static partial class SimpleIntercept
                 content += "\r\n";
                 content += $@"//replace code: {code}";
                 content += "\r\n";
+                content += $"//variable : {item.NameOfVariable}";
+                content += "\r\n";
                 content += $$""" 
-    [System.Runtime.CompilerServices.InterceptsLocation(@"{{lineSpan.Path}}", {{startLinePosition.Line + 1}}, {{startLinePosition.Character + 3}})]
+[System.Runtime.CompilerServices.InterceptsLocation(@"{{lineSpan.Path}}", {{startLinePosition.Line + 1}}, {{startLinePosition.Character + 1+ extraLength }})]
                 
 """;
             }
@@ -132,9 +161,9 @@ static partial class SimpleIntercept
             content += $$"""
 
     //[System.Diagnostics.DebuggerStepThrough()]
-    public static {{typeReturn}} Test{{methodName}}(this {{typeOfClass.ToString()}} p)  {
+    public static {{typeReturn}} {{item.MethodSignature}}({{item.ThisArgument()}})  {
          //return "A12";
-        return p.{{methodName}}();
+        return {{item.CallMethod}};
     
     }
 }                
@@ -171,6 +200,8 @@ static partial class SimpleIntercept
         if (!TryGetMapMethodName(s, out var method))
             return false;
         if (method == "FullName" || method == "Test")
+            return true;
+        if(method == "PersonsLoaded")
             return true;
         return false;
 
