@@ -1,11 +1,8 @@
-﻿namespace RSCG_InterceptorTemplateConsole;
-//internal class PersonLoader
-//{
-//    public Task<Person[]> GetPersonsFromFile()
-//}
-internal class Person
+﻿namespace RSCG_DemoObjects;
+
+public class Person
 {
-    static int nrPersons= 0;
+    static int nrPersons = 0;
     public Person()
     {
         nrPersons++;
@@ -24,5 +21,8 @@ internal class Person
     {
         return nrPersons;
     }
-
+    public static int ShowRandomPersonNumber(int min)
+    {
+        return Random.Shared.Next(min, nrPersons);
+    }
 }

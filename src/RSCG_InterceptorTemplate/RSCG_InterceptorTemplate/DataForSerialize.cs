@@ -1,7 +1,19 @@
 ﻿
-using System.Reflection;
 
 namespace RSCG_InterceptorTemplate;
+public partial struct Argument
+{
+    public Argument(string typeAndName)
+    {
+        this.TypeAndName = typeAndName;
+        this.Type=typeAndName.Split(' ')[0];
+        this.Name=typeAndName.Split(' ')[1];
+    }
+    public string TypeAndName { get; }
+    public string Type { get; }
+    public string Name { get; }
+}
+
 public partial struct TypeAndMethod 
 {
     public TypeAndMethod(string typeOfClass, string methodInvocation, string typeReturn,string nameOfVariable)
@@ -59,14 +71,29 @@ public partial struct TypeAndMethod
     {
         get
         {
+            var args=string.Join(",", Arguments.Select(a => a.Name));
             if (this.InstanceIsNotNull)
             {
-                return $"{NameOfVariable}.{MethodInvocation}()";
+                return $"{NameOfVariable}.{MethodInvocation}({args})";
             }
             else
             {
-                return MethodInvocation;
+                return $"{MethodInvocation}({args})";
             }
+        }
+    }
+    public string ArgumentsForCallMethod
+    {
+        get
+        {
+            string args=string.Join(",", Arguments.Select(a => a.TypeAndName));
+
+            if (this.InstanceIsNotNull && args.Length>0)
+            {
+                //first argument is this
+                args = "," + args;
+            }
+            return args;
         }
     }
     public string ThisArgument()
@@ -90,5 +117,5 @@ public partial struct TypeAndMethod
         }
     }
 
-    
+    public Argument[] Arguments { get; internal set; }
 }

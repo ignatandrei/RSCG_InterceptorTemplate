@@ -58,11 +58,25 @@ namespace RSCG_InterceptorTemplate{
                 TryGetMapMethodName(op.Syntax, out var methodName);  
                 var typeReturn = op.Type;
                 var invocation = op  as IInvocationOperation;
+                Argument[] arguments = [];
+                if (invocation != null && invocation.Arguments.Length > 0)
+                {
+                    arguments = invocation
+                    .Arguments
+                    .Where(it=>it?.Parameter != null)
+                    .Select(it => new Argument(it!.Parameter!.ToDisplayString()))
+                    .ToArray();
+                }
                 var instance = invocation?.Instance as ILocalReferenceOperation;
                 TypeAndMethod typeAndMethod;
                 if(instance == null)
                 {
-                    var staticMember = invocation?.TargetMethod?.ToString();
+                    var staticMember = invocation?.TargetMethod?.ToDisplayString();
+                    var justMethod = staticMember?.IndexOf("(");
+                    if(justMethod != null && justMethod > 0)
+                    {
+                        staticMember = staticMember?.Substring(0,justMethod.Value);
+                    }
                     //if(staticMember != null)
                     //{
                     //    var typeOfClass = compilation.GetTypeByMetadataName(staticMember);
@@ -70,7 +84,12 @@ namespace RSCG_InterceptorTemplate{
                     typeAndMethod = new TypeAndMethod(staticMember?? "", typeReturn?.ToString() ?? "");
                     var nameMethod = typeAndMethod.MethodName;
                     string fullCall = op.Syntax.ToFullString();
-                    var nameVar = fullCall.Substring(0,fullCall.Length-nameMethod.Length -"()".Length -".".Length );
+                    justMethod = fullCall.IndexOf("(");
+                    if (justMethod != null && justMethod > 0)
+                    {
+                        fullCall = fullCall.Substring(0, justMethod.Value);                        
+                    }
+                    var nameVar = fullCall.Substring(0,fullCall.Length-nameMethod.Length -".".Length );
                     typeAndMethod.NameOfVariable=nameVar;
 
                 }
@@ -81,6 +100,7 @@ namespace RSCG_InterceptorTemplate{
                     typeAndMethod = new TypeAndMethod(typeOfClass?.ToString() ?? "", methodName ?? "", typeReturn?.ToString() ?? "",nameVar);
 
                 }
+                typeAndMethod.Arguments = arguments;
                 return new { typeAndMethod,op};
 
             })
@@ -161,7 +181,7 @@ static partial class SimpleIntercept
             content += $$"""
 
     //[System.Diagnostics.DebuggerStepThrough()]
-    public static {{typeReturn}} {{item.MethodSignature}}({{item.ThisArgument()}})  {
+    public static {{typeReturn}} {{item.MethodSignature}}({{item.ThisArgument()}} {{item.ArgumentsForCallMethod}} )  {
          //return "A12";
         return {{item.CallMethod}};
     
@@ -203,6 +223,11 @@ static partial class SimpleIntercept
             return true;
         if(method == "PersonsLoaded")
             return true;
+        if (method== "FullNameWithSeparator")
+            return true;
+        if (method == "ShowRandomPersonNumber")
+            return true;
+
         return false;
 
         //var q=Environment.GetEnvironmentVariable("ASdasd");

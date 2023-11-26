@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RSCG_InterceptorTemplateCon
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RSCG_InterceptorTemplateCommon", "RSCG_InterceptorTemplateCommon\RSCG_InterceptorTemplateCommon.csproj", "{56D34F1A-A61E-4AE6-901E-E464141A443C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RSCG_InterceptorTemplate", "RSCG_InterceptorTemplate\RSCG_InterceptorTemplate.csproj", "{D9868403-773E-4784-97D0-A1CC8D88029B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RSCG_InterceptorTemplate", "RSCG_InterceptorTemplate\RSCG_InterceptorTemplate.csproj", "{D9868403-773E-4784-97D0-A1CC8D88029B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RSCG_DemoObjects", "RSCG_DemoObjects\RSCG_DemoObjects.csproj", "{EB90C581-704A-4866-BC92-9B8C2151F055}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{D9868403-773E-4784-97D0-A1CC8D88029B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D9868403-773E-4784-97D0-A1CC8D88029B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D9868403-773E-4784-97D0-A1CC8D88029B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB90C581-704A-4866-BC92-9B8C2151F055}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB90C581-704A-4866-BC92-9B8C2151F055}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB90C581-704A-4866-BC92-9B8C2151F055}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB90C581-704A-4866-BC92-9B8C2151F055}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
