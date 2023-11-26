@@ -47,6 +47,13 @@ public partial struct TypeAndMethod
     public string TypeReturn { get; }
     public string NameOfVariable { get; set; }
 
+    public bool HasTaskReturnType
+    {
+        get
+        {
+            return TypeReturn.Contains("System.Threading.Tasks.Task");
+        }
+    }
     public bool IsValid()
     {
 
@@ -64,6 +71,20 @@ public partial struct TypeAndMethod
             else
             {
                 return MethodInvocation.Split('.').Last().Replace("()", "");
+            }
+        }
+    }
+    public string ReturnString
+    {
+        get
+        {
+            if(this.TypeReturn=="void")
+            {
+                return "";
+            }
+            else
+            {
+                return $"return";
             }
         }
     }

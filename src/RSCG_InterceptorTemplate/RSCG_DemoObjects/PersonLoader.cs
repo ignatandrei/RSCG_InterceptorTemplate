@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 namespace RSCG_DemoObjects;
 public class PersonLoader
 {
+    public static void Connect()
+    {
+        Console.WriteLine("connected");
+    }
     public static async Task<Person> SavePerson(Person p)
     {
         await Task.Delay(100);

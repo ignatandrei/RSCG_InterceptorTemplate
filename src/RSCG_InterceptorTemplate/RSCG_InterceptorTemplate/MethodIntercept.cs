@@ -181,10 +181,12 @@ static partial class SimpleIntercept
             content += $$"""
 
     //[System.Diagnostics.DebuggerStepThrough()]
-    public static {{typeReturn}} {{item.MethodSignature}}({{item.ThisArgument()}} {{item.ArgumentsForCallMethod}} )  {
-         //return "A12";
-        return {{item.CallMethod}};
-    
+    public static {{(item.HasTaskReturnType?"async":"")}} {{typeReturn}} {{item.MethodSignature}}({{item.ThisArgument()}} {{item.ArgumentsForCallMethod}} )  {
+         //return "A123";
+         Console.WriteLine("-->aaa{{item.MethodSignature}}");
+        {{item.ReturnString}} {{(item.HasTaskReturnType ? "await" : "")}} {{item.CallMethod}};
+         Console.WriteLine("-->aasd{{item.MethodSignature}}");
+
     }
 }                
 """;
@@ -227,7 +229,12 @@ static partial class SimpleIntercept
             return true;
         if (method == "ShowRandomPersonNumber")
             return true;
-
+        if(method == "Connect")
+            return true;
+        if(method == "SavePerson")  
+            return true;
+        if(method == "InsertPerson")
+            return true;
         return false;
 
         //var q=Environment.GetEnvironmentVariable("ASdasd");
