@@ -183,9 +183,9 @@ static partial class SimpleIntercept
     //[System.Diagnostics.DebuggerStepThrough()]
     public static {{(item.HasTaskReturnType?"async":"")}} {{typeReturn}} {{item.MethodSignature}}({{item.ThisArgument()}} {{item.ArgumentsForCallMethod}} )  {
          //return "A123";
-         Console.WriteLine("-->aaa{{item.MethodSignature}}");
+         Console.WriteLine("Test1-->{{item.MethodSignature}}");
         {{item.ReturnString}} {{(item.HasTaskReturnType ? "await" : "")}} {{item.CallMethod}};
-         Console.WriteLine("-->aasd{{item.MethodSignature}}");
+         Console.WriteLine("Test2-->{{item.MethodSignature}}");
 
     }
 }                
