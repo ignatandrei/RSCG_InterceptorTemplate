@@ -7,3 +7,5 @@ var x = p.Test();
 Console.WriteLine(x);
 var namePerson = p.FullName();
 Console.WriteLine(namePerson);
+
+Console.WriteLine("loaded "+Person.PersonsLoaded());

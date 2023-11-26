@@ -55,10 +55,11 @@ namespace RSCG_InterceptorTemplate{
             .Left.Right
             .Select(op =>
             {
-                TryGetMapMethodName(op.Syntax, out var methodName);                
+                TryGetMapMethodName(op.Syntax, out var methodName);  
+                var typeReturn = op.Type;
                 var invocation = op  as IInvocationOperation;
                 var typeOfClass = invocation?.Instance?.Type;
-                var typeAndMethod = new TypeAndMethod(typeOfClass?.ToString()??"", methodName??"");
+                var typeAndMethod = new TypeAndMethod(typeOfClass?.ToString()??"", methodName??"",typeReturn.ToString()??"");
                 return new { typeAndMethod,op};
 
             })
@@ -73,7 +74,7 @@ namespace RSCG_InterceptorTemplate{
         {
             var methodName = item.Method;
             var typeOfClass = item.TypeOfClass; 
-
+            var typeReturn = item.TypeReturn;
 
             var content = $$"""
 
@@ -131,9 +132,9 @@ static partial class SimpleIntercept
             content += $$"""
 
     //[System.Diagnostics.DebuggerStepThrough()]
-    public static string Test{{methodName}}(this {{typeOfClass.ToString()}} p)  {
-         return "A12";
-        //return p.{{methodName}}();
+    public static {{typeReturn}} Test{{methodName}}(this {{typeOfClass.ToString()}} p)  {
+         //return "A12";
+        return p.{{methodName}}();
     
     }
 }                
