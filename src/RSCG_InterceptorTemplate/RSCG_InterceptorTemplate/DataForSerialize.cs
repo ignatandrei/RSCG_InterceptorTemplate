@@ -23,7 +23,7 @@ class DataForSerializeFile
             return $$"""
 
     //[System.Diagnostics.DebuggerStepThrough()]
-    public static {{(item.HasTaskReturnType ? "async" : "")}} {{item.TypeReturn}} {{item.MethodSignature}}({{item.ThisArgument()}} {{item.ArgumentsForCallMethod}} )  {
+    public static {{(item.HasTaskReturnType ? "async" : "")}} {{item.TypeReturn}} {{item.MethodSignature}}({{item.ThisArgument}} {{item.ArgumentsForCallMethod}} )  {
          //return "Andrei";
          Console.WriteLine("beginX-->{{item.CallMethod}}");
         {{item.ReturnString}} {{(item.HasTaskReturnType ? "await" : "")}} {{item.CallMethod}};

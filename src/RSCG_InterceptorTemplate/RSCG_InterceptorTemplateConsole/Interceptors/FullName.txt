@@ -1,3 +1,4 @@
+//example generating
 #pragma warning disable CS1591 
 #pragma warning disable CS9113
 namespace System.Runtime.CompilerServices{
@@ -10,14 +11,13 @@ file class InterceptsLocationAttribute(string filePath, int line, int character)
 namespace RSCG_InterceptorTemplate{
 static partial class SimpleIntercept
 {
-[System.Runtime.CompilerServices.InterceptsLocation(@"{{lineSpan.Path}}", {{startLinePosition.Line + 1}}, {{startLinePosition.Character + 1+ extraLength }})]
 
 //[System.Diagnostics.DebuggerStepThrough()]
-public static {{(item.HasTaskReturnType?"async":"")}} {{typeReturn}} {{item.MethodSignature}}({{item.ThisArgument()}} {{item.ArgumentsForCallMethod}} )  {
-        //return "Andrei";
-        Console.WriteLine("beginX-->{{item.MethodSignature}}");
-    {{item.ReturnString}} {{(item.HasTaskReturnType ? "await" : "")}} {{item.CallMethod}};
-        Console.WriteLine("endY-->{{item.MethodSignature}}");
+public static {{(ser.item.HasTaskReturnType?"async":"")}} {{ser.item.TypeReturn}} {{ser.item.MethodSignature}}({{ser.item.ThisArgument}} {{ser.item.ArgumentsForCallMethod}} )  
+{
+     Console.WriteLine("from template-->{{ser.item.MethodSignature}}");
+    {{ser.item.ReturnString}} {{(ser.item.HasTaskReturnType ? "await" : "")}} {{ser.item.CallMethod}};
+    Console.WriteLine("from template-->{{ser.item.MethodSignature}}");
 
 }
                 

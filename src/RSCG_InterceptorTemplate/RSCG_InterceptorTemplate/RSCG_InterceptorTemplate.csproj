@@ -6,7 +6,8 @@
 	  <Nullable>enable</Nullable>
 	  <ImplicitUsings>enable</ImplicitUsings>
 	  <IsRoslynComponent>true</IsRoslynComponent>
-		<EnforceExtendedAnalyzerRules>false</EnforceExtendedAnalyzerRules>	  
+		<EnforceExtendedAnalyzerRules>false</EnforceExtendedAnalyzerRules>
+	  <IncludeBuildOutput>false</IncludeBuildOutput>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,6 +17,23 @@
     </PackageReference>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0" />
   </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Scriban" Version="5.9.0"  PrivateAssets="all" GeneratePathProperty="true" />
+		<None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<None Include="$(PKGScriban)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+	</ItemGroup>
+
+	<PropertyGroup>
+		<GetTargetPathDependsOn>$(GetTargetPathDependsOn);GetDependencyTargetPaths</GetTargetPathDependsOn>
+	</PropertyGroup>
+
+	<Target Name="GetDependencyTargetPaths">
+		<ItemGroup>
+			<TargetPathWithTargetPlatformMoniker Include="$(PKGScriban)\lib\netstandard2.0\*.dll" IncludeRuntimeDependency="false" />
+		</ItemGroup>
+	</Target>
+
+
 	<PropertyGroup>
 		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
 		<CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)\GX</CompilerGeneratedFilesOutputPath>

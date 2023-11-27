@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Operations;
 using Microsoft.CodeAnalysis.Text;
+using Scriban;
 using System;
 using System.Collections.Immutable;
 using System.Net;
@@ -171,8 +172,13 @@ public class MethodIntercept : IIncrementalGenerator
             if(fileText == null)
             {
                 fileContent = ser.DataToBeWriten;
+                spc.AddSource(ser.nameFileToBeWritten + ".cs", fileContent);
+                continue;
             }
+            var template = Template.Parse(fileText);
+            fileContent = template.Render(new { ser },m=>m.Name);
             spc.AddSource(ser.nameFileToBeWritten + ".cs", fileContent);
+
 
         }
     }

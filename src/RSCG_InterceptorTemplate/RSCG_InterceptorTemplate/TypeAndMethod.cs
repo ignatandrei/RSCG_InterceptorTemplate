@@ -105,15 +105,18 @@ public partial struct TypeAndMethod
             return args;
         }
     }
-    public string ThisArgument()
+    public string ThisArgument
     {
-        if (this.InstanceIsNotNull)
+        get
         {
-            return $"this {TypeOfClass} {NameOfVariable}";
-        }
-        else
-        {
-            return "";
+            if (this.InstanceIsNotNull)
+            {
+                return $"this {TypeOfClass} {NameOfVariable}";
+            }
+            else
+            {
+                return "";
+            }
         }
     }
 
