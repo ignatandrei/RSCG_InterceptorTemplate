@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace RSCG_DemoObjects;
-public class PersonLoader
+public class PersonLoader : IPersonLoader
 {
     public static void Connect()
     {
@@ -18,6 +18,6 @@ public class PersonLoader
     }
     public Task<Person> InsertPerson(Person p)
     {
-        return Task.FromResult( p);
+        return Task.FromResult(p);
     }
 }

@@ -25,3 +25,5 @@ Console.WriteLine("and a random person " + Person.ShowRandomPersonNumber(1));
 var q= await PersonLoader.SavePerson(newPerson);
 PersonLoader.Connect();
 //Console.ReadLine();
+IPersonLoader ipl=new PersonLoader();
+await ipl.InsertPerson(newPerson);
