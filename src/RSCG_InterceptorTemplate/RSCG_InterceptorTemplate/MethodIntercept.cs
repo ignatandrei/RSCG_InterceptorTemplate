@@ -18,9 +18,13 @@ public class MethodIntercept : IIncrementalGenerator
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
 
-        var x = Environment.GetEnvironmentVariable("ASdasd");
+        var methods = Environment.GetEnvironmentVariable("InterceptMethods");
+        var data = methods?.Split(';');
+        data ??= [];
+        //data = ["FullName", "Test", "PersonsLoaded", "FullNameWithSeparator", "ShowRandomPersonNumber", "Connect", "SavePerson", "InsertPerson"]
+        //data = ["FullName"];
         var classesToIntercept = context.SyntaxProvider.CreateSyntaxProvider(
-                predicate: (s, _) => IsSyntaxTargetForGeneration(s),
+                predicate: (s, _) => IsSyntaxTargetForGeneration(s,data),
                 transform: static (context, token) =>
                 {
                     var operation = context.SemanticModel.GetOperation(context.Node, token);
@@ -200,9 +204,9 @@ static partial class SimpleIntercept
     //[System.Diagnostics.DebuggerStepThrough()]
     public static {{(item.HasTaskReturnType?"async":"")}} {{typeReturn}} {{item.MethodSignature}}({{item.ThisArgument()}} {{item.ArgumentsForCallMethod}} )  {
          //return "Andrei";
-         Console.WriteLine("AsAATest1-->{{item.MethodSignature}}");
+         Console.WriteLine("beginX-->{{item.MethodSignature}}");
         {{item.ReturnString}} {{(item.HasTaskReturnType ? "await" : "")}} {{item.CallMethod}};
-         Console.WriteLine("BBBTest2-->{{item.MethodSignature}}");
+         Console.WriteLine("endY-->{{item.MethodSignature}}");
 
     }
 }                
@@ -236,24 +240,27 @@ static partial class SimpleIntercept
         }
         return false;
     }
-    private bool IsSyntaxTargetForGeneration(SyntaxNode s)
+    private bool IsSyntaxTargetForGeneration(SyntaxNode s, string[] data)
     {
+        if(data.Length == 0)return false;
         if (!TryGetMapMethodName(s, out var method))
             return false;
-        if (method == "FullName" || method == "Test")
+        if(data.Contains(method))
             return true;
-        if(method == "PersonsLoaded")
-            return true;
-        if (method== "FullNameWithSeparator")
-            return true;
-        if (method == "ShowRandomPersonNumber")
-            return true;
-        if(method == "Connect")
-            return true;
-        if(method == "SavePerson")  
-            return true;
-        if(method == "InsertPerson")
-            return true;
+        //if (method == "FullName" || method == "Test")
+        //    return true;
+        //if(method == "PersonsLoaded")
+        //    return true;
+        //if (method== "FullNameWithSeparator")
+        //    return true;
+        //if (method == "ShowRandomPersonNumber")
+        //    return true;
+        //if(method == "Connect")
+        //    return true;
+        //if(method == "SavePerson")  
+        //    return true;
+        //if(method == "InsertPerson")
+        //    return true;
         return false;
 
         //var q=Environment.GetEnvironmentVariable("ASdasd");

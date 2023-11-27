@@ -24,4 +24,4 @@ Console.WriteLine("and now with argument " + newPerson.FullNameWithSeparator("!+
 Console.WriteLine("and a random person " + Person.ShowRandomPersonNumber(1));
 var q= await PersonLoader.SavePerson(newPerson);
 PersonLoader.Connect();
-Console.ReadLine();
+//Console.ReadLine();
