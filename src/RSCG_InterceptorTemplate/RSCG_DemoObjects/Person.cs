@@ -11,7 +11,16 @@ public class Person
     public string? LastName { get; set; }
     public string FullName() => $"{FirstName} {LastName}";
 
-    public string TestFullNameWithArguments(string start,string separator,string end) => $"{start}{FirstName}{separator}{LastName}{end}";
+    public string TestFullNameWithArguments(string start, string separator, string end, int repeat)
+    {
+        var str=$"{start}{FirstName}{separator}{LastName}{end}";
+        var ret = "";
+        foreach (var item in Enumerable.Range(0, repeat).ToArray())
+        {
+            ret += str;
+        }
+        return ret;
+    }
     public string Test()
     {
         return FullName();
