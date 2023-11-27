@@ -1,5 +1,7 @@
-﻿namespace RSCG_InterceptorTemplate;
-public class DataForSerializeFile
+﻿using System.Runtime.ConstrainedExecution;
+
+namespace RSCG_InterceptorTemplate;
+class DataForSerializeFile
 {
     public TypeAndMethod item;
 
@@ -32,57 +34,45 @@ public class DataForSerializeFile
 """;
         } }
 
+    public string nameFileToBeWritten { get; internal set; }
+
     internal string startContent = $$"""
 static partial class SimpleIntercept
 {
             
 """;
     public List<DataForEachIntercept> dataForEachIntercepts=new();
-}
 
-public struct DataForEachIntercept
+    internal static string cntPrefix = $$""""
+#pragma warning disable CS1591 
+#pragma warning disable CS9113
+namespace System.Runtime.CompilerServices{
+[AttributeUsage(AttributeTargets.Method,AllowMultiple =true)]
+file class InterceptsLocationAttribute(string filePath, int line, int character) : Attribute
 {
-    public string CodeNumbered
+}
+}//end namespace
+
+namespace RSCG_InterceptorTemplate{
+
+"""";
+
+    internal static string cntSuffix = $$""""
+
+}//namespace RSCG_InterceptorTemplate
+
+"""";
+
+    public string DataToBeWriten 
     {
         get
         {
-            int numberCode = 0;
-            string codeNumbered = "";
-            while (numberCode < code.Length)
-            {
-                numberCode++;
-                var nr1 = numberCode % 10;
-                if (nr1 == 0)
-                {
-                    codeNumbered += "!";
-                }
-                else
-                {
-                    codeNumbered += (nr1).ToString();
-                }
-
-            }
-            return codeNumbered;
+            var cnt = cntPrefix;
+            cnt += startContent;
+            dataForEachIntercepts.ForEach(it => cnt += it.DataToBeWriten);
+            cnt += Declaration;
+            cnt += cntSuffix;
+            return cnt;
         }
     }
-    public string code { get; set; }
-
-    public string Path { get; set; }
-    public int Line { get; internal set; }
-    public int StartMethod { get; internal set; }
-    public string DataToBeWriten
-    {
-        get
-        {            
-            var   content = "\r\n";
-            content += $@"//replace code: {code}";
-            content += "\r\n";
-            content += $@"//replace code: {CodeNumbered}";
-            content += "\r\n";
-            content+=$$""" 
-[System.Runtime.CompilerServices.InterceptsLocation(@"{{Path}}", {{Line}}, {{StartMethod}})]                
-""";
-            return content;
-        }
-    } 
 }

@@ -6,6 +6,7 @@ using Microsoft.CodeAnalysis.Text;
 using System;
 using System.Collections.Immutable;
 using System.Net;
+using System.Runtime.ConstrainedExecution;
 using System.Xml.Linq;
 //https://github.com/dotnet/aspnetcore/blob/main/src/Http/Http.Extensions/gen/StaticRouteHandlerModel/InvocationOperationExtensions.cs
 //https://github.com/dotnet/aspnetcore/blob/main/src/Http/Http.Extensions/gen/RequestDelegateGenerator.cs
@@ -49,22 +50,8 @@ public class MethodIntercept : IIncrementalGenerator
             ;
 
         var compilation = value.Left.Left;
-        var cntPrefix = "";
-        cntPrefix += $$""""
-#pragma warning disable CS1591 
-#pragma warning disable CS9113
-namespace System.Runtime.CompilerServices{
-[AttributeUsage(AttributeTargets.Method,AllowMultiple =true)]
-file class InterceptsLocationAttribute(string filePath, int line, int character) : Attribute
-{
-}
-}//end namespace
-
-namespace RSCG_InterceptorTemplate{
-
-"""";
-        var cntSuffix = "\r\n";
-        cntSuffix += "}//namespace RSCG_InterceptorTemplate";
+        
+        
 
         var ops = value
             .Left.Right
@@ -131,12 +118,13 @@ namespace RSCG_InterceptorTemplate{
             .Select(a => new { a.Key, Count = a.Count() })
             .ToDictionary(it => it.Key, it =>(number:0, total:it.Count));
 
+        Dictionary<TypeAndMethod , DataForSerializeFile> dataForSerializeFiles = new();
         foreach (var item in ops.Keys)
         {
             var ser=new DataForSerializeFile();
+            dataForSerializeFiles.Add(item, ser);
             ser.item = item;
 
-            var cnt= cntPrefix;
             var methodName = item.MethodName;
             var typeOfClass = item.TypeOfClass;
             string nameFile = typeOfClass + "_" + methodName;
@@ -147,10 +135,10 @@ namespace RSCG_InterceptorTemplate{
             nrFilesPerMethodAndClass[nameFile]= (nr, nrFiles.total);
             nameFile += $"_nr_{nr}_from_{nrFiles.total}";
             //var typeReturn = item.TypeReturn;
+            ser.nameFileToBeWritten = nameFile;
             var nameOfVariable = item.NameOfVariable;
             int extraLength = ser.extraLength;
 
-            cnt += ser.startContent;
             foreach (var itemData in ops[item])
             {
                 
@@ -169,12 +157,14 @@ namespace RSCG_InterceptorTemplate{
                 dataForEachIntercept.Path = lineSpan.Path;
                 dataForEachIntercept.Line = startLinePosition.Line + 1;
                 dataForEachIntercept.StartMethod = startLinePosition.Character + 1 + extraLength;
-                cnt += dataForEachIntercept.DataToBeWriten;
             }
             
-            cnt += ser.Declaration;
-            cnt += cntSuffix;
-            spc.AddSource(nameFile+".cs", cnt);
+        }
+        foreach (var item in ops.Keys)
+        {
+            var ser = dataForSerializeFiles[item];            
+            spc.AddSource(ser.nameFileToBeWritten + ".cs", ser.DataToBeWriten);
+
         }
         //cnt += "\r\n";
         //cnt += "}//namespace RSCG_InterceptorTemplate";
