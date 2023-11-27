@@ -23,8 +23,9 @@ public class MethodIntercept : IIncrementalGenerator
         var data = methods?.Split(';');
         data ??= [];
         //data = ["FullName", "Test", "PersonsLoaded", "FullNameWithSeparator", "ShowRandomPersonNumber", "Connect", "SavePerson", "InsertPerson"];
-        data = ["FullName","Test", "PersonsLoaded"];
+        //data = ["FullName","Test", "PersonsLoaded"];
         //data = ["Connect"];
+        data = ["FullName"];
         var classesToIntercept = context.SyntaxProvider.CreateSyntaxProvider(
                 predicate: (s, _) => IsSyntaxTargetForGeneration(s,data),
                 transform: static (context, token) =>
@@ -43,6 +44,7 @@ public class MethodIntercept : IIncrementalGenerator
     }
     private void ExecuteGen(SourceProductionContext spc, ((Compilation Left, ImmutableArray<IOperation> Right) Left, ImmutableArray<AdditionalText> Right) value)
     {
+        
         var textes = value
             .Right.ToArray()
             .Select(it=>new { it.Path, text = it.GetText()?.ToString() })
@@ -111,8 +113,8 @@ public class MethodIntercept : IIncrementalGenerator
             .ToDictionary(x => x.Key, x => x.ToArray())
             ;
 
-        var x12= ops.Keys.Count;
-        x12+= 1;
+        if (ops.Keys.Count == 0)
+            return;
         var nrFilesPerMethodAndClass = ops.Keys
             .GroupBy(it => it.TypeOfClass + "_" + it.MethodName)
             .Select(a => new { a.Key, Count = a.Count() })
@@ -162,28 +164,23 @@ public class MethodIntercept : IIncrementalGenerator
         }
         foreach (var item in ops.Keys)
         {
-            var ser = dataForSerializeFiles[item];            
-            spc.AddSource(ser.nameFileToBeWritten + ".cs", ser.DataToBeWriten);
+            string fileContent = "";
+            var ser = dataForSerializeFiles[item];
+            var name = item.MethodName;
+            var fileText=textes.FirstOrDefault(it=>it.Path.EndsWith(name+".txt"))?.text;
+            if(fileText == null)
+            {
+                fileContent = ser.DataToBeWriten;
+            }
+            spc.AddSource(ser.nameFileToBeWritten + ".cs", fileContent);
 
         }
-        //cnt += "\r\n";
-        //cnt += "}//namespace RSCG_InterceptorTemplate";
-        //spc.AddSource("RSCG_InterceptorTemplate.g.cs", cnt);
-        var x = 1;
     }
 
-    private void ExecuteGenOld(SourceProductionContext spc, ((Compilation Left, ImmutableArray<Tuple<AttributeSyntax, SymbolInfo>> Right) Left, ImmutableArray<AdditionalText> Right) data)
-    {
-        //data.Left.Left.Assembly.Name = "RSCG_InterceptorTemplate";
-
-        var x = 1;
-    }
-    public static bool TryGetMapMethodName(SyntaxNode node, out string? methodName)
+   public static bool TryGetMapMethodName(SyntaxNode node, out string? methodName)
     {
         methodName = default;
-        // Given an invocation like app.MapGet, app.Map, app.MapFallback, etc. get
-        // the value of the Map method being access on the the WebApplication `app`.
-        if (node is InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Name: { Identifier: { ValueText: var method } } } })
+       if (node is InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Name: { Identifier: { ValueText: var method } } } })
         {
             methodName = method;
             return true;
@@ -197,71 +194,9 @@ public class MethodIntercept : IIncrementalGenerator
             return false;
         if(data.Contains(method))
             return true;
-        //if (method == "FullName" || method == "Test")
-        //    return true;
-        //if(method == "PersonsLoaded")
-        //    return true;
-        //if (method== "FullNameWithSeparator")
-        //    return true;
-        //if (method == "ShowRandomPersonNumber")
-        //    return true;
-        //if(method == "Connect")
-        //    return true;
-        //if(method == "SavePerson")  
-        //    return true;
-        //if(method == "InsertPerson")
-        //    return true;
         return false;
 
-        //var q=Environment.GetEnvironmentVariable("ASdasd");
-        //var x1 = s.ToFullString();
-        //if(s  is InvocationExpressionSyntax inv)
-        //{
-        //    if (x1.Contains("FullName"))
-        //    {
-        //        var p = inv.Parent;
-        //        var s1 = p.ToFullString();
-        //        s1 += "asda";
-
-        //    }
-
-        //}
-        //if (s is not AttributeSyntax cds) return false;
-        //if (!cds.Name.ToFullString().Contains("InterceptClassMethods")) return false;
-        //if(cds.Parent is not AttributeListSyntax als) return false;
-        //var x = als.Target?.Identifier.Text;
-        //if(x != "assembly") return false;
-        //return true;
-
     }
-    //private Tuple<AttributeSyntax, SymbolInfo>? GetSemanticTargetForGeneration(GeneratorSyntaxContext ctx)
-    //{
-    //    var cds = ctx.Node as AttributeSyntax;
-    //    if (cds == null) return null;
-
-
-    //    //if (data == null) return null;
-    //    return new Tuple<AttributeSyntax, SymbolInfo>(cds, symbolInfo);
-
-    //}
-
-    private Tuple<AttributeSyntax, SymbolInfo>? OldGetSemanticTargetForGeneration(GeneratorSyntaxContext ctx)
-    {
-
-        var attributeSyntax = ctx.Node as AttributeSyntax;
-        if (attributeSyntax == null) return null;
-
-        var symbolInfo = ctx.SemanticModel.GetSymbolInfo(attributeSyntax);
-        var q = ctx.SemanticModel.GetDeclaredSymbol(attributeSyntax);
-        var q1 = ctx.SemanticModel.GetTypeInfo(attributeSyntax);
-        ITypeSymbol? t = q1.Type;
-        var attributeSymbol = t as INamedTypeSymbol;
-
-        if (attributeSymbol == null) return null;
-
-        var genericType = attributeSymbol.TypeArguments.FirstOrDefault();
-
-        return new Tuple<AttributeSyntax, SymbolInfo>(attributeSyntax, symbolInfo);
-    }
+    
 
 }
