@@ -3,6 +3,13 @@
 namespace RSCG_InterceptorTemplate;
 class DataForSerializeFile
 {
+    static int count = 0;
+    public DataForSerializeFile(TypeAndMethod item)
+    {
+        this.item = item;
+        Interlocked.Increment(ref count);        
+        nameFileToBeWritten = $"{item.TypeOfClass}_{item.MethodName}_{count}";
+    }
     public TypeAndMethod item;
 
     public int extraLength
@@ -34,7 +41,7 @@ class DataForSerializeFile
 """;
         } }
 
-    public string nameFileToBeWritten { get; internal set; }
+    public string nameFileToBeWritten { get;  }
 
     internal string startContent = $$"""
 static partial class SimpleIntercept

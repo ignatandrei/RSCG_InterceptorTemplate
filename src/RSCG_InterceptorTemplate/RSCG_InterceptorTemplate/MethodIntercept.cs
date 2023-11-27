@@ -23,10 +23,10 @@ public class MethodIntercept : IIncrementalGenerator
         var methods = Environment.GetEnvironmentVariable("InterceptMethods");
         var data = methods?.Split(';');
         data ??= [];
-        //data = ["FullName", "Test", "PersonsLoaded", "FullNameWithSeparator", "ShowRandomPersonNumber", "Connect", "SavePerson", "InsertPerson"];
+        data = ["FullName", "Test", "PersonsLoaded", "FullNameWithSeparator", "ShowRandomPersonNumber", "Connect", "SavePerson", "InsertPerson"];
         //data = ["FullName","Test", "PersonsLoaded"];
         //data = ["Connect"];
-        data = ["FullName"];
+        //data = ["FullName"];
         var classesToIntercept = context.SyntaxProvider.CreateSyntaxProvider(
                 predicate: (s, _) => IsSyntaxTargetForGeneration(s,data),
                 transform: static (context, token) =>
@@ -124,21 +124,21 @@ public class MethodIntercept : IIncrementalGenerator
         Dictionary<TypeAndMethod , DataForSerializeFile> dataForSerializeFiles = new();
         foreach (var item in ops.Keys)
         {
-            var ser=new DataForSerializeFile();
+            var ser=new DataForSerializeFile(item);
             dataForSerializeFiles.Add(item, ser);
             ser.item = item;
 
             var methodName = item.MethodName;
             var typeOfClass = item.TypeOfClass;
-            string nameFile = typeOfClass + "_" + methodName;
-            var nrFiles = nrFilesPerMethodAndClass[nameFile];
+            //string nameFile = typeOfClass + "_" + methodName;
+            //var nrFiles = nrFilesPerMethodAndClass[nameFile];
             
-            var nr = nrFiles.number;
-            nr++;
-            nrFilesPerMethodAndClass[nameFile]= (nr, nrFiles.total);
-            nameFile += $"_nr_{nr}_from_{nrFiles.total}";
+            //var nr = nrFiles.number;
+            //nr++;
+            //nrFilesPerMethodAndClass[nameFile]= (nr, nrFiles.total);
+            //nameFile += $"_nr_{nr}_from_{nrFiles.total}";
             //var typeReturn = item.TypeReturn;
-            ser.nameFileToBeWritten = nameFile;
+            //ser.nameFileToBeWritten = nameFile;
             var nameOfVariable = item.NameOfVariable;
             int extraLength = ser.extraLength;
 
@@ -163,21 +163,26 @@ public class MethodIntercept : IIncrementalGenerator
             }
             
         }
-        foreach (var item in ops.Keys)
+
+        foreach (var ser in dataForSerializeFiles)
         {
-            string fileContent = "";
-            var ser = dataForSerializeFiles[item];
-            var name = item.MethodName;
+            var name = ser.Key.MethodName;
             var fileText=textes.FirstOrDefault(it=>it.Path.EndsWith(name+".txt"))?.text;
             if(fileText == null)
             {
-                fileContent = ser.DataToBeWriten;
-                spc.AddSource(ser.nameFileToBeWritten + ".cs", fileContent);
+                fileText = textes.FirstOrDefault(it => it.Path.EndsWith("GenericInterceptorForAllMethods.txt"))?.text;
+                
+            }
+            if(fileText != null)
+            {
+                var template = Template.Parse(fileText);
+                string fileContent = template.Render(new { ser= ser.Value }, m => m.Name);
+                spc.AddSource(ser.Value.nameFileToBeWritten + ".cs", fileContent);
                 continue;
             }
-            var template = Template.Parse(fileText);
-            fileContent = template.Render(new { ser },m=>m.Name);
-            spc.AddSource(ser.nameFileToBeWritten + ".cs", fileContent);
+            //write default?            
+            spc.AddSource(ser.Value.nameFileToBeWritten + ".cs", ser.Value.DataToBeWriten);
+            continue;
 
 
         }

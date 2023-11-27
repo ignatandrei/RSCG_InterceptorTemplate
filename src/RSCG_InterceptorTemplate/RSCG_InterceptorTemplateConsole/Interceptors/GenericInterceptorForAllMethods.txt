@@ -21,16 +21,10 @@ static partial class SimpleIntercept
 //[System.Diagnostics.DebuggerStepThrough()]
 public static {{(ser.item.HasTaskReturnType?"async":"")}} {{ser.item.TypeReturn}} {{ser.item.MethodSignature}}({{ser.item.ThisArgument}} {{ser.item.ArgumentsForCallMethod}} )  
 {
-    var cc=Console.BackgroundColor ;
-    try{
-    Console.BackgroundColor = ConsoleColor.DarkGreen;
-    Console.WriteLine("start specific FullName template-->{{ser.item.MethodSignature}}");
+     Console.WriteLine("from generic template-->{{ser.item.MethodSignature}}");
     {{ser.item.ReturnString}} {{(ser.item.HasTaskReturnType ? "await" : "")}} {{ser.item.CallMethod}};
-    }
-    finally{
-        Console.WriteLine("end specific template-->{{ser.item.MethodSignature}}");
-        Console.BackgroundColor = cc;
-    }
+    Console.WriteLine("from generic template-->{{ser.item.MethodSignature}}");
+
 }
                 
 

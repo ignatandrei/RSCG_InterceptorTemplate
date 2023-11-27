@@ -1,6 +1,6 @@
 ﻿namespace RSCG_InterceptorTemplate;
 
-public class DataForEachIntercept
+class DataForEachIntercept
 {
     public string CodeNumbered
     {

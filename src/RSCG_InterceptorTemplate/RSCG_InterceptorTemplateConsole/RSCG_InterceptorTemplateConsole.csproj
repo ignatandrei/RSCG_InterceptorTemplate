@@ -7,8 +7,12 @@
     <Nullable>enable</Nullable>	  
   </PropertyGroup>
 
+ 
   
   <ItemGroup>
+    <AdditionalFiles Include="Interceptors\GenericInterceptorForAllMethods.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </AdditionalFiles>
     <AdditionalFiles Include="Interceptors\FullName.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </AdditionalFiles>
