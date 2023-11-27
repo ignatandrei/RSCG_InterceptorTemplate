@@ -23,7 +23,7 @@ public class MethodIntercept : IIncrementalGenerator
         var methods = Environment.GetEnvironmentVariable("InterceptMethods");
         var data = methods?.Split(';');
         data ??= [];
-        data = ["FullName", "Test", "PersonsLoaded", "FullNameWithSeparator", "ShowRandomPersonNumber", "Connect", "SavePerson", "InsertPerson"];
+        //data = ["FullName", "Test", "PersonsLoaded", "FullNameWithSeparator", "ShowRandomPersonNumber", "Connect", "SavePerson", "InsertPerson"];
         //data = ["FullName","Test", "PersonsLoaded"];
         //data = ["Connect"];
         //data = ["FullName"];
@@ -178,8 +178,18 @@ public class MethodIntercept : IIncrementalGenerator
                 var template = Template.Parse(fileText);
                 string fileContent = template.Render(new { ser= ser.Value }, m => m.Name);
                 spc.AddSource(ser.Value.nameFileToBeWritten + ".cs", fileContent);
+                
                 continue;
             }
+            Diagnostic d = Diagnostic.Create(
+                new DiagnosticDescriptor("RSCG_InterceptorTemplate", 
+                "RSCG_InterceptorTemplate_001", 
+                $"no template for method {name}", "RSCG_InterceptorTemplate", 
+                DiagnosticSeverity.Warning, 
+                true), 
+                Location.None);
+
+            spc.ReportDiagnostic(d);
             //write default?            
             spc.AddSource(ser.Value.nameFileToBeWritten + ".cs", ser.Value.DataToBeWriten);
             continue;
