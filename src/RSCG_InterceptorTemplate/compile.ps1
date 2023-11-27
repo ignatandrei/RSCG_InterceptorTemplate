@@ -5,7 +5,7 @@ gci bin -recurse | foreach{ri $_.FullName -recurse -force }
 #for windows batch file 
 #setx InterceptMethods "FullName"
 #echo Environment variable InterceptMethods has been set to %InterceptMethods%
-$env:InterceptMethods = "FullName;Test;PersonsLoaded;FullNameWithSeparator;ShowRandomPersonNumber;Connect;SavePerson;InsertPerson"
+$env:InterceptMethods = "FullName;Test;PersonsLoaded;TestFullNameWithArguments;ShowRandomPersonNumber;Connect;SavePerson;InsertPerson"
 Write-Host "Environment variable  $env:InterceptMethods  has been set to " $env:InterceptMethods
 dotnet clean
 dotnet restore

@@ -20,7 +20,7 @@ Console.WriteLine("loaded "+Person.PersonsLoaded());
 Console.WriteLine("loaded " + RSCG_DemoObjects.Person.PersonsLoaded());
 Console.WriteLine("and again  " + RSCG_DemoObjects.Person.PersonsLoaded());
 
-Console.WriteLine("and now with argument " + newPerson.FullNameWithSeparator("!+"));
+Console.WriteLine("and now with argument " + newPerson.TestFullNameWithArguments("<","!+",">"));
 Console.WriteLine("and a random person " + Person.ShowRandomPersonNumber(1));
 var q= await PersonLoader.SavePerson(newPerson);
 PersonLoader.Connect();

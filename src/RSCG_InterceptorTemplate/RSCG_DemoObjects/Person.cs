@@ -11,7 +11,7 @@ public class Person
     public string? LastName { get; set; }
     public string FullName() => $"{FirstName} {LastName}";
 
-    public string FullNameWithSeparator(string separator) => $"{FirstName}{separator}{LastName}";
+    public string TestFullNameWithArguments(string start,string separator,string end) => $"{start}{FirstName}{separator}{LastName}{end}";
     public string Test()
     {
         return FullName();

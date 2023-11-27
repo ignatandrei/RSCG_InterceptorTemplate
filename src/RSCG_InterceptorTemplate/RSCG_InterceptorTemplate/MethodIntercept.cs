@@ -23,10 +23,12 @@ public class MethodIntercept : IIncrementalGenerator
         var methods = Environment.GetEnvironmentVariable("InterceptMethods");
         var data = methods?.Split(';');
         data ??= [];
-        //data = ["FullName", "Test", "PersonsLoaded", "FullNameWithSeparator", "ShowRandomPersonNumber", "Connect", "SavePerson", "InsertPerson"];
+        //data = ["FullName", "Test", "PersonsLoaded", "TestFullNameWithArguments", "ShowRandomPersonNumber", "Connect", "SavePerson", "InsertPerson"];
         //data = ["FullName","Test", "PersonsLoaded"];
         //data = ["Connect"];
         //data = ["FullName"];
+        
+        //data = ["TestFullNameWithArguments"];
         var classesToIntercept = context.SyntaxProvider.CreateSyntaxProvider(
                 predicate: (s, _) => IsSyntaxTargetForGeneration(s,data),
                 transform: static (context, token) =>
