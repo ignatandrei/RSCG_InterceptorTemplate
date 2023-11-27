@@ -25,9 +25,9 @@ class DataForEachIntercept
             return codeNumbered;
         }
     }
-    public string code { get; set; }
+    public string code { get; set; } = "";
 
-    public string Path { get; set; }
+    public string Path { get; set; } = "";
     public int Line { get; internal set; }
     public int StartMethod { get; internal set; }
     public string DataToBeWriten

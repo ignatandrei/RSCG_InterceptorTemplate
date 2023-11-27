@@ -1,4 +1,4 @@
-//example generating
+//example generating generic for all methods in a class
 #pragma warning disable CS1591 
 #pragma warning disable CS9113
 namespace System.Runtime.CompilerServices{
@@ -21,10 +21,13 @@ static partial class SimpleIntercept
 //[System.Diagnostics.DebuggerStepThrough()]
 public static {{(ser.item.HasTaskReturnType?"async":"")}} {{ser.item.TypeReturn}} {{ser.item.MethodSignature}}({{ser.item.ThisArgument}} {{ser.item.ArgumentsForCallMethod}} )  
 {
-     Console.WriteLine("from generic template-->{{ser.item.MethodSignature}}");
-    {{ser.item.ReturnString}} {{(ser.item.HasTaskReturnType ? "await" : "")}} {{ser.item.CallMethod}};
-    Console.WriteLine("from generic template-->{{ser.item.MethodSignature}}");
-
+    try{
+        Console.WriteLine("start from generic template-->{{ser.item.MethodSignature}}");
+        {{ser.item.ReturnString}} {{(ser.item.HasTaskReturnType ? "await" : "")}} {{ser.item.CallMethod}};
+    }
+    finally{
+        Console.WriteLine("end from generic template-->{{ser.item.MethodSignature}}");
+    }
 }
                 
 

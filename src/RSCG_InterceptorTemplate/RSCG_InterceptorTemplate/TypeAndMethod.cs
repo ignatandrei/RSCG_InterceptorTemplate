@@ -129,5 +129,5 @@ public partial struct TypeAndMethod
         }
     }
 
-    public Argument[] Arguments { get; internal set; }
+    public Argument[] Arguments { get; internal set; } = [];
 }
