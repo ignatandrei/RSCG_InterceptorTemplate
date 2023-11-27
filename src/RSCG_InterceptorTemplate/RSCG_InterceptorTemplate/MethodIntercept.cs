@@ -21,8 +21,9 @@ public class MethodIntercept : IIncrementalGenerator
         var methods = Environment.GetEnvironmentVariable("InterceptMethods");
         var data = methods?.Split(';');
         data ??= [];
-        //data = ["FullName", "Test", "PersonsLoaded", "FullNameWithSeparator", "ShowRandomPersonNumber", "Connect", "SavePerson", "InsertPerson"]
-        //data = ["FullName"];
+        //data = ["FullName", "Test", "PersonsLoaded", "FullNameWithSeparator", "ShowRandomPersonNumber", "Connect", "SavePerson", "InsertPerson"];
+        data = ["FullName","Test", "PersonsLoaded"];
+        //data = ["Connect"];
         var classesToIntercept = context.SyntaxProvider.CreateSyntaxProvider(
                 predicate: (s, _) => IsSyntaxTargetForGeneration(s,data),
                 transform: static (context, token) =>
@@ -41,6 +42,12 @@ public class MethodIntercept : IIncrementalGenerator
     }
     private void ExecuteGen(SourceProductionContext spc, ((Compilation Left, ImmutableArray<IOperation> Right) Left, ImmutableArray<AdditionalText> Right) value)
     {
+        var textes = value
+            .Right.ToArray()
+            .Select(it=>new { it.Path, text = it.GetText()?.ToString() })
+            .ToArray();
+            ;
+
         var compilation = value.Left.Left;
         var cntPrefix = "";
         cntPrefix += $$""""
@@ -126,6 +133,9 @@ namespace RSCG_InterceptorTemplate{
 
         foreach (var item in ops.Keys)
         {
+            var ser=new DataForSerializeFile();
+            ser.item = item;
+
             var cnt= cntPrefix;
             var methodName = item.MethodName;
             var typeOfClass = item.TypeOfClass;
@@ -136,83 +146,33 @@ namespace RSCG_InterceptorTemplate{
             nr++;
             nrFilesPerMethodAndClass[nameFile]= (nr, nrFiles.total);
             nameFile += $"_nr_{nr}_from_{nrFiles.total}";
-            var typeReturn = item.TypeReturn;
+            //var typeReturn = item.TypeReturn;
             var nameOfVariable = item.NameOfVariable;
-            int extraLength = nameOfVariable.Length;
-            if(extraLength > 0)
-            {
-                //acknowledge the dot
-                extraLength += 1;
-            }
-            var content = $$"""
+            int extraLength = ser.extraLength;
 
-static partial class SimpleIntercept
-{
-            
-"""
-            ;
-
+            cnt += ser.startContent;
             foreach (var itemData in ops[item])
             {
+                
+                DataForEachIntercept dataForEachIntercept = new();
+                ser.dataForEachIntercepts.Add(dataForEachIntercept);
                 var op= itemData.op;
                 var tree = op.Syntax.SyntaxTree;
-
                 var filePath = compilation.Options.SourceReferenceResolver?.NormalizePath(tree.FilePath, baseFilePath: null) ?? tree.FilePath;
-                var location = tree.GetLocation(op.Syntax.Span);
-                
+                var location = tree.GetLocation(op.Syntax.Span);             
                 var lineSpan = location.GetLineSpan();
                 var startLinePosition = lineSpan.StartLinePosition;
-
                 SourceText sourceText = location.SourceTree!.GetText();
-
-                
                 var line = sourceText.Lines[startLinePosition.Line];
-
-                // Now 'line' contains the line of code from the location
                 string code = line.ToString();
-                int numberCode = 0;
-                content += "\r\n";
-                content += $@"//replace code: {code}";
-                string codeNumbered = "";
-                while (numberCode < code.Length)
-                {
-                    numberCode++;
-                    var nr1 = numberCode % 10;
-                    if (nr1 == 0)
-                    {
-                        codeNumbered += "!";
-                    }
-                    else
-                    {
-                        codeNumbered += (nr1).ToString();
-                    }
-                    
-                }
-                content += "\r\n";
-                content += $@"//replace code: {codeNumbered}";
-                content += "\r\n";
-                content += $"//variable : {item.NameOfVariable}";
-                content += "\r\n";
-                content += $$""" 
-[System.Runtime.CompilerServices.InterceptsLocation(@"{{lineSpan.Path}}", {{startLinePosition.Line + 1}}, {{startLinePosition.Character + 1+ extraLength }})]
-                
-""";
+                dataForEachIntercept.code = code;
+                dataForEachIntercept.Path = lineSpan.Path;
+                dataForEachIntercept.Line = startLinePosition.Line + 1;
+                dataForEachIntercept.StartMethod = startLinePosition.Character + 1 + extraLength;
+                cnt += dataForEachIntercept.DataToBeWriten;
             }
-
-            content += $$"""
-
-    //[System.Diagnostics.DebuggerStepThrough()]
-    public static {{(item.HasTaskReturnType?"async":"")}} {{typeReturn}} {{item.MethodSignature}}({{item.ThisArgument()}} {{item.ArgumentsForCallMethod}} )  {
-         //return "Andrei";
-         Console.WriteLine("beginX-->{{item.MethodSignature}}");
-        {{item.ReturnString}} {{(item.HasTaskReturnType ? "await" : "")}} {{item.CallMethod}};
-         Console.WriteLine("endY-->{{item.MethodSignature}}");
-
-    }
-}                
-""";
-
-            cnt += content;
+            
+            cnt += ser.Declaration;
             cnt += cntSuffix;
             spc.AddSource(nameFile+".cs", cnt);
         }

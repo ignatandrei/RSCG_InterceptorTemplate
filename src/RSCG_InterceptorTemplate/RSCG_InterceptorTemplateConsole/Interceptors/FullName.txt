@@ -1,0 +1,27 @@
+#pragma warning disable CS1591 
+#pragma warning disable CS9113
+namespace System.Runtime.CompilerServices{
+[AttributeUsage(AttributeTargets.Method,AllowMultiple =true)]
+file class InterceptsLocationAttribute(string filePath, int line, int character) : Attribute
+{
+}
+}//end namespace
+
+namespace RSCG_InterceptorTemplate{
+static partial class SimpleIntercept
+{
+[System.Runtime.CompilerServices.InterceptsLocation(@"{{lineSpan.Path}}", {{startLinePosition.Line + 1}}, {{startLinePosition.Character + 1+ extraLength }})]
+
+//[System.Diagnostics.DebuggerStepThrough()]
+public static {{(item.HasTaskReturnType?"async":"")}} {{typeReturn}} {{item.MethodSignature}}({{item.ThisArgument()}} {{item.ArgumentsForCallMethod}} )  {
+        //return "Andrei";
+        Console.WriteLine("beginX-->{{item.MethodSignature}}");
+    {{item.ReturnString}} {{(item.HasTaskReturnType ? "await" : "")}} {{item.CallMethod}};
+        Console.WriteLine("endY-->{{item.MethodSignature}}");
+
+}
+                
+
+}//end class
+
+}//namespace RSCG_InterceptorTemplate

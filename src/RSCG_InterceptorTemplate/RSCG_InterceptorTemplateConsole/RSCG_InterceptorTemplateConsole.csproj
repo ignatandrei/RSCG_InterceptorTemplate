@@ -7,6 +7,13 @@
     <Nullable>enable</Nullable>	  
   </PropertyGroup>
 
+  
+  <ItemGroup>
+    <AdditionalFiles Include="Interceptors\FullName.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </AdditionalFiles>
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\RSCG_DemoObjects\RSCG_DemoObjects.csproj" />
     <ProjectReference Include="..\RSCG_InterceptorTemplateCommon\RSCG_InterceptorTemplateCommon.csproj" />

@@ -1,142 +1,88 @@
-﻿
-
-namespace RSCG_InterceptorTemplate;
-public partial struct Argument
+﻿namespace RSCG_InterceptorTemplate;
+public class DataForSerializeFile
 {
-    public Argument(string typeAndName)
+    public TypeAndMethod item;
+
+    public int extraLength
     {
-        this.TypeAndName = typeAndName;
-        this.Type=typeAndName.Split(' ')[0];
-        this.Name=typeAndName.Split(' ')[1];
+        get
+        {
+            var extra = item.NameOfVariable.Length;
+            if (extra > 0)
+            {
+                //acknowledge the dot
+                extra += 1;
+            }
+            return extra;
+        }
     }
-    public string TypeAndName { get; }
-    public string Type { get; }
-    public string Name { get; }
+
+    public string Declaration { get {
+            return $$"""
+
+    //[System.Diagnostics.DebuggerStepThrough()]
+    public static {{(item.HasTaskReturnType ? "async" : "")}} {{item.TypeReturn}} {{item.MethodSignature}}({{item.ThisArgument()}} {{item.ArgumentsForCallMethod}} )  {
+         //return "Andrei";
+         Console.WriteLine("beginX-->{{item.CallMethod}}");
+        {{item.ReturnString}} {{(item.HasTaskReturnType ? "await" : "")}} {{item.CallMethod}};
+         Console.WriteLine("endY-->{{item.MethodSignature}}");
+
+    }
+}                
+""";
+        } }
+
+    internal string startContent = $$"""
+static partial class SimpleIntercept
+{
+            
+""";
+    public List<DataForEachIntercept> dataForEachIntercepts=new();
 }
 
-public partial struct TypeAndMethod 
+public struct DataForEachIntercept
 {
-    public TypeAndMethod(string typeOfClass, string methodInvocation, string typeReturn,string nameOfVariable)
-    {
-        InstanceIsNotNull = true;
-        TypeOfClass = typeOfClass;
-        MethodInvocation = methodInvocation;
-        TypeReturn = typeReturn;
-        NameOfVariable = nameOfVariable;
-        
-    }
-    public TypeAndMethod(string staticMethod, string typeReturn)
-    {
-        InstanceIsNotNull = false;
-        var methods = staticMethod.Split('.');
-        TypeOfClass = methods[0] + ".";
-        for (int i = 1; i < methods.Length - 1; i++)
-        {
-            TypeOfClass += methods[i];
-            TypeOfClass += ".";
-        }
-        TypeOfClass = TypeOfClass.TrimEnd('.');
-        MethodInvocation = staticMethod;
-        TypeReturn = typeReturn;
-        
-        NameOfVariable = "";
-    }
-    public bool InstanceIsNotNull { get; }
-    public string TypeOfClass { get; }
-    public string MethodInvocation { get; }
-    public string TypeReturn { get; }
-    public string NameOfVariable { get; set; }
-
-    public bool HasTaskReturnType
+    public string CodeNumbered
     {
         get
         {
-            return TypeReturn.Contains("System.Threading.Tasks.Task");
+            int numberCode = 0;
+            string codeNumbered = "";
+            while (numberCode < code.Length)
+            {
+                numberCode++;
+                var nr1 = numberCode % 10;
+                if (nr1 == 0)
+                {
+                    codeNumbered += "!";
+                }
+                else
+                {
+                    codeNumbered += (nr1).ToString();
+                }
+
+            }
+            return codeNumbered;
         }
     }
-    public bool IsValid()
-    {
+    public string code { get; set; }
 
-        return TypeOfClass.Length > 0 && MethodInvocation.Length > 0;
-
-    }
-    public string MethodName
+    public string Path { get; set; }
+    public int Line { get; internal set; }
+    public int StartMethod { get; internal set; }
+    public string DataToBeWriten
     {
         get
-        {
-            if (this.InstanceIsNotNull)
-            {
-                return MethodInvocation;
-            }
-            else
-            {
-                return MethodInvocation.Split('.').Last().Replace("()", "");
-            }
+        {            
+            var   content = "\r\n";
+            content += $@"//replace code: {code}";
+            content += "\r\n";
+            content += $@"//replace code: {CodeNumbered}";
+            content += "\r\n";
+            content+=$$""" 
+[System.Runtime.CompilerServices.InterceptsLocation(@"{{Path}}", {{Line}}, {{StartMethod}})]                
+""";
+            return content;
         }
-    }
-    public string ReturnString
-    {
-        get
-        {
-            if(this.TypeReturn=="void")
-            {
-                return "";
-            }
-            else
-            {
-                return $"return";
-            }
-        }
-    }
-    public string CallMethod
-    {
-        get
-        {
-            var args=string.Join(",", Arguments.Select(a => a.Name));
-            if (this.InstanceIsNotNull)
-            {
-                return $"{NameOfVariable}.{MethodInvocation}({args})";
-            }
-            else
-            {
-                return $"{MethodInvocation}({args})";
-            }
-        }
-    }
-    public string ArgumentsForCallMethod
-    {
-        get
-        {
-            string args=string.Join(",", Arguments.Select(a => a.TypeAndName));
-
-            if (this.InstanceIsNotNull && args.Length>0)
-            {
-                //first argument is this
-                args = "," + args;
-            }
-            return args;
-        }
-    }
-    public string ThisArgument()
-    {
-        if (this.InstanceIsNotNull)
-        {
-            return $"this {TypeOfClass} {NameOfVariable}";
-        }
-        else
-        {
-            return "";
-        }
-    }
-
-    public string MethodSignature
-    {
-        get
-        {
-            var nameOfVariable = NameOfVariable.Replace(".","_");
-            return $"Intercept_{nameOfVariable}_{MethodName}";
-        }
-    }
-
-    public Argument[] Arguments { get; internal set; }
+    } 
 }
