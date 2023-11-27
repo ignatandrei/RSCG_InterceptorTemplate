@@ -1,0 +1,7 @@
+{
+  "scriptShell": "pwsh", // Optional
+  "scripts": {
+    "build": "dotnet build --configuration Release",
+    "pack": "dotnet r build && dotnet pack -o Packages --include-symbols --include-source"
+  }
+}

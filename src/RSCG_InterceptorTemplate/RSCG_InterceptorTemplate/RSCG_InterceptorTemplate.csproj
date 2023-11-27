@@ -7,7 +7,7 @@
 	  <ImplicitUsings>enable</ImplicitUsings>
 	  <IsRoslynComponent>true</IsRoslynComponent>
 		<EnforceExtendedAnalyzerRules>false</EnforceExtendedAnalyzerRules>
-	  <IncludeBuildOutput>false</IncludeBuildOutput>
+	  <IncludeBuildOutput>true</IncludeBuildOutput>
   </PropertyGroup>
 
   <ItemGroup>
