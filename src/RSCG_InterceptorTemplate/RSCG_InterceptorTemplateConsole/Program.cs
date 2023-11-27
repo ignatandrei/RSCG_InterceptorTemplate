@@ -1,4 +1,6 @@
-﻿;
+﻿//gci obj -recurse | foreach{ri $_.FullName -recurse -force }
+//gci bin -recurse | foreach{ri $_.FullName -recurse -force }
+//dotnet build /p:EmitCompilerGeneratedFiles = true--disable - build - servers--force
 
 Console.WriteLine("Hello, World!");
 var p=new Person();

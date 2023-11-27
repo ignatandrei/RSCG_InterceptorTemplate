@@ -38,19 +38,23 @@ public class MethodIntercept : IIncrementalGenerator
     private void ExecuteGen(SourceProductionContext spc, ((Compilation Left, ImmutableArray<IOperation> Right) Left, ImmutableArray<AdditionalText> Right) value)
     {
         var compilation = value.Left.Left;
-        var cnt = "";
-        cnt += $$""""
+        var cntPrefix = "";
+        cntPrefix += $$""""
 #pragma warning disable CS1591 
 #pragma warning disable CS9113
 namespace System.Runtime.CompilerServices{
 [AttributeUsage(AttributeTargets.Method,AllowMultiple =true)]
-sealed class InterceptsLocationAttribute(string filePath, int line, int character) : Attribute
+file class InterceptsLocationAttribute(string filePath, int line, int character) : Attribute
 {
 }
-}
+}//end namespace
+
 namespace RSCG_InterceptorTemplate{
 
 """";
+        var cntSuffix = "\r\n";
+        cntSuffix += "}//namespace RSCG_InterceptorTemplate";
+
         var ops = value
             .Left.Right
             .Select(op =>
@@ -111,10 +115,23 @@ namespace RSCG_InterceptorTemplate{
 
         var x12= ops.Keys.Count;
         x12+= 1;
+        var nrFilesPerMethodAndClass = ops.Keys
+            .GroupBy(it => it.TypeOfClass + "_" + it.MethodName)
+            .Select(a => new { a.Key, Count = a.Count() })
+            .ToDictionary(it => it.Key, it =>(number:0, total:it.Count));
+
         foreach (var item in ops.Keys)
         {
+            var cnt= cntPrefix;
             var methodName = item.MethodName;
-            var typeOfClass = item.TypeOfClass; 
+            var typeOfClass = item.TypeOfClass;
+            string nameFile = typeOfClass + "_" + methodName;
+            var nrFiles = nrFilesPerMethodAndClass[nameFile];
+            
+            var nr = nrFiles.number;
+            nr++;
+            nrFilesPerMethodAndClass[nameFile]= (nr, nrFiles.total);
+            nameFile += $"_nr_{nr}_from_{nrFiles.total}";
             var typeReturn = item.TypeReturn;
             var nameOfVariable = item.NameOfVariable;
             int extraLength = nameOfVariable.Length;
@@ -149,14 +166,14 @@ static partial class SimpleIntercept
 
                 // Now 'line' contains the line of code from the location
                 string code = line.ToString();
-                int nr = 0;
+                int numberCode = 0;
                 content += "\r\n";
                 content += $@"//replace code: {code}";
                 string codeNumbered = "";
-                while (nr < code.Length)
+                while (numberCode < code.Length)
                 {
-                    nr++;
-                    var nr1 = nr % 10;
+                    numberCode++;
+                    var nr1 = numberCode % 10;
                     if (nr1 == 0)
                     {
                         codeNumbered += "!";
@@ -182,20 +199,22 @@ static partial class SimpleIntercept
 
     //[System.Diagnostics.DebuggerStepThrough()]
     public static {{(item.HasTaskReturnType?"async":"")}} {{typeReturn}} {{item.MethodSignature}}({{item.ThisArgument()}} {{item.ArgumentsForCallMethod}} )  {
-         //return "A123";
-         Console.WriteLine("Test1-->{{item.MethodSignature}}");
+         //return "Andrei";
+         Console.WriteLine("AsAATest1-->{{item.MethodSignature}}");
         {{item.ReturnString}} {{(item.HasTaskReturnType ? "await" : "")}} {{item.CallMethod}};
-         Console.WriteLine("Test2-->{{item.MethodSignature}}");
+         Console.WriteLine("BBBTest2-->{{item.MethodSignature}}");
 
     }
 }                
 """;
 
             cnt += content;
+            cnt += cntSuffix;
+            spc.AddSource(nameFile+".cs", cnt);
         }
-        cnt += "\r\n";
-        cnt += "}//namespace RSCG_InterceptorTemplate";
-        spc.AddSource("RSCG_InterceptorTemplate.g.cs", cnt);
+        //cnt += "\r\n";
+        //cnt += "}//namespace RSCG_InterceptorTemplate";
+        //spc.AddSource("RSCG_InterceptorTemplate.g.cs", cnt);
         var x = 1;
     }
 
