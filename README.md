@@ -13,6 +13,7 @@ Console.WriteLine("and now with argument " + newPerson.TestFullNameWithArguments
 ```
 
 it can intercept it with the arguments .
+
 For example, if you use this template 
 
 ```csharp
@@ -45,15 +46,10 @@ public static  string Intercept_newPerson_TestFullNameWithArguments(this RSCG_De
         Console.BackgroundColor = ConsoleColor.DarkRed;
         Console.WriteLine("start specific TestFullNameWithArguments template-->Intercept_newPerson_TestFullNameWithArguments");
         Console.WriteLine("number of arguments = 4");
-        
-                Console.WriteLine("argument 1 type string and value = "+ start);
-                
-                Console.WriteLine("argument 2 type string and value = "+ separator);
-                
-                Console.WriteLine("argument 3 type string and value = "+ end);
-                
-                Console.WriteLine("argument 4 type int and value = "+ repeat);
-                
+        Console.WriteLine("argument 1 type string and value = "+ start);
+        Console.WriteLine("argument 2 type string and value = "+ separator);
+        Console.WriteLine("argument 3 type string and value = "+ end);
+        Console.WriteLine("argument 4 type int and value = "+ repeat);
         return  newPerson.TestFullNameWithArguments(start,separator,end,repeat);
     }
     finally{
@@ -82,7 +78,9 @@ Add to your project (>= .NET 8 ) the nuget package RSCG_InterceptorTemplate
 </PropertyGroup>
 ```
 
-Make a folder Interceptors in the project and add also at least the generic interceptor
+Make a folder Interceptors in the project and add also at least the generic interceptor ( see templates at src/RSCG_InterceptorTemplateConsole/Interceptors/ , start with GenericInterceptorForAllMethods.txt )
+
+```csharp
 
 ```xml
   <ItemGroup>

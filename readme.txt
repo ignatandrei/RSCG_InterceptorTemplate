@@ -1,7 +1,4 @@
-https://github.com/ignatandrei/RSCG_InterceptorTemplate
-
-
-
+Welcome at  https://github.com/ignatandrei/RSCG_InterceptorTemplate
 
 Add to your project (>= .NET 8 ) the nuget package RSCG_InterceptorTemplate
 
@@ -16,7 +13,8 @@ Add to your project (>= .NET 8 ) the nuget package RSCG_InterceptorTemplate
 </PropertyGroup>
 ```
 
-Make a folder Interceptors in the project and add also at least the generic interceptor
+Make a folder Interceptors in the project and add also at least the generic interceptor( see templates at src/RSCG_InterceptorTemplateConsole/Interceptors/ , start with GenericInterceptorForAllMethods.txt )
+
 
 ```xml
   <ItemGroup>
@@ -29,7 +27,7 @@ Make a folder Interceptors in the project and add also at least the generic inte
   </ItemGroup>
 ```
 
-The interceptor will not run template at build time in Visual Studiom, but it will run at build time in dotnet build.
+The interceptor will not run template at build time in Visual Studio, but it will run at build time in dotnet build.
 
 For this, you need to have something like that ( powershell file) -I named mine compile.ps1
 
