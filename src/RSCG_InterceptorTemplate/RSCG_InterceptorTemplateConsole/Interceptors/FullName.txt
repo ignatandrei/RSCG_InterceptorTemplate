@@ -1,4 +1,4 @@
-//example generating for full name
+//example generating for full name {{Version}}
 #pragma warning disable CS1591 
 #pragma warning disable CS9113
 namespace System.Runtime.CompilerServices{

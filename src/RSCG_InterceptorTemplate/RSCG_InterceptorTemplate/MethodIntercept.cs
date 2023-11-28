@@ -178,7 +178,7 @@ public class MethodIntercept : IIncrementalGenerator
             if(fileText != null)
             {
                 var template = Template.Parse(fileText);
-                string fileContent = template.Render(new { ser= ser.Value }, m => m.Name);
+                string fileContent = template.Render(new { ser= ser.Value, Version= "8.2023.2811.446" }, m => m.Name);
                 spc.AddSource(ser.Value.nameFileToBeWritten + ".cs", fileContent);
                 
                 continue;

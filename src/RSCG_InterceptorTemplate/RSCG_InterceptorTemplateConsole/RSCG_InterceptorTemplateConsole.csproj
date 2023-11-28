@@ -20,10 +20,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </AdditionalFiles>
   </ItemGroup>
+  
 
   <ItemGroup>
     <ProjectReference Include="..\RSCG_DemoObjects\RSCG_DemoObjects.csproj" />
     <ProjectReference Include="..\RSCG_InterceptorTemplate\RSCG_InterceptorTemplate.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+	  <!--<PackageReference Include="RSCG_InterceptorTemplate" Version="1.0.0" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />-->
   </ItemGroup>
 	<PropertyGroup>
 		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>

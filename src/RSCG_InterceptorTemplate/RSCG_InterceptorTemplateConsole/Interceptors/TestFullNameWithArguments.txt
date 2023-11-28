@@ -1,4 +1,4 @@
-//example generating for TestFullNameWithArguments
+//example generating for TestFullNameWithArguments {{Version}}
 #pragma warning disable CS1591 
 #pragma warning disable CS9113
 namespace System.Runtime.CompilerServices{
