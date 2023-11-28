@@ -1,9 +1,6 @@
 name: Deploy Nuget
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
   
 jobs:
@@ -26,5 +23,8 @@ jobs:
         run: |
           cd src
           ls -lh
-          cd RSCG_InterceptorTemplate_NuGetPackage
-          ls -lh
+
+      - name: push nuget
+        run: |
+          dotnet nuget push ${{github.workspace}}/src/*symb*.*pkg --api-key  ${{ secrets.NUGETAPIKEY }} --source https://api.nuget.org/v3/index.json
+    
