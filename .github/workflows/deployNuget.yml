@@ -1,0 +1,30 @@
+name: Deploy Nuget
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+  
+jobs:
+  mainBuild:
+    uses: ./.github/workflows/build.yml 
+  build:
+    needs: [mainBuild]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+    
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v3
+        with:
+          name: RSCG_InterceptorTemplate_NuGetPackage
+          path: .
+
+      - name: publish nuget
+        run: |
+          cd src
+          ls
+          cd RSCG_InterceptorTemplate_NuGetPackage
+          ls
