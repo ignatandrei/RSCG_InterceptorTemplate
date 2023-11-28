@@ -59,7 +59,7 @@
 	<PropertyGroup>
 		<PackAsTool>false</PackAsTool>
 		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-		<Version>8.2023.2811.446</Version>
+		<Version>8.2023.2811.524</Version>
 		<Authors>Andrei Ignat</Authors>
 		<Description>Roslyn Interceptor Template </Description>
 		<Title>Roslyn Interceptor Template </Title>
