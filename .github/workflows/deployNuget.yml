@@ -20,11 +20,11 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: RSCG_InterceptorTemplate_NuGetPackage
-          path: .
+          path: src
 
       - name: publish nuget
         run: |
           cd src
-          ls
+          ls -lh
           cd RSCG_InterceptorTemplate_NuGetPackage
-          ls
+          ls -lh
